@@ -1,10 +1,18 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const env = require('../config/env');
 
-const uploadDir = path.join(__dirname, '..', env.upload.dir);
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+// Vercel mein sirf /tmp folder writable hota hai
+const uploadDir = process.env.VERCEL
+  ? path.join(os.tmpdir(), 'uploads')
+  : path.join(__dirname, '..', env.upload.dir);
+try {
+  fs.mkdirSync(uploadDir, { recursive: true });
+} catch (e) {
+  // ignore
+}
 
 const ALLOWED_MIME = new Set([
   'image/png',

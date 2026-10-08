@@ -7,6 +7,7 @@ const env = require('./env');
 const sequelize = env.db.url
   ? new Sequelize(env.db.url, {
       dialect: 'postgres',
+      dialectModule: require('pg'),
       logging: env.nodeEnv === 'development' ? console.log : false,
       dialectOptions:
         env.nodeEnv === 'production'

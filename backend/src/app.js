@@ -33,7 +33,17 @@ app.use(morgan(env.nodeEnv === 'development' ? 'dev' : 'combined'));
 app.use('/uploads', express.static(path.join(__dirname, env.upload.dir)));
 
 app.get('/health', (req, res) => res.json({ success: true, message: 'DevFlow CRM API is running', env: env.nodeEnv }));
-
+// TEMPORARY diagnostic - remove after debugging
+app.get('/health/db', async (req, res) => {
+  try {
+    const { sequelize } = require('./models');
+    await sequelize.authenticate();
+    const [rows] = await sequelize.query('select count(*)::int as n from users');
+    res.json({ ok: true, hasDbUrl: !!env.db.url, users: rows[0].n });
+  } catch (e) {
+    res.status(500).json({ ok: false, hasDbUrl: !!env.db.url, error: e.message });
+  }
+});
 app.use('/api/v1', apiRoutes);
 
 app.use(notFoundHandler);

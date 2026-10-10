@@ -10,9 +10,8 @@ const { errorHandler, notFoundHandler } = require('./middleware/error.middleware
 
 const app = express();
 app.set('trust proxy', 1);
-// Middleware order (per official brief 13.2):
-// request -> CORS -> helmet -> JSON parser -> request logger ->
-// auth/permission middleware (inside each route) -> validation -> controller -> error handler
+
+// Allow the configured client URL and any devflow-crm-*.vercel.app frontend.
 app.use(
   cors({
     origin: (origin, cb) => {
